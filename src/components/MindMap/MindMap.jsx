@@ -34,6 +34,8 @@ import { DialogLoader, SmallLoader } from "components/common/NewLoader";
 import { fromUnixTime } from "date-fns";
 import ReadMoreLess from "components/common/ReadMoreLess";
 import mindMapData from "staticData/mindmap.json"
+import { WidthWide } from "@mui/icons-material";
+import { useResponsiveContext } from "context/ResponsiveContext";
 const VectorData = lazy(() => import("./VectorData"));
 const CustomNoRowsOverlay = lazy(
 	() => import("components/common/CustomNoRowsOverlay")
@@ -408,9 +410,111 @@ const MindMap = () => {
 	}, [org.host_url, page, order, sortBy]);
 	const getRowId = (row) => row.vector_id; // Assuming vector_id is the unique identifier for each row
 
+
+	const { isMobile } = useResponsiveContext();
+
+
 	return (
 		<>
-			<div className={classes.titleContainer}>
+			{isMobile?<div className={classes.titleContainer}>
+				<Box className={classes.action_box}>
+					<Button
+						variant="contained"
+						style={{width: "80%"}}
+						color="primary"
+						startIcon={<AddIcon />}
+						onClick={handleOpenAddDialog}
+					>
+						<Typography variant="h6" component="span" align="center">
+							Add Data
+						</Typography>
+					</Button>
+					<Button
+						variant="contained"
+						color="secondary"
+						style={{width: "80%"}}
+						startIcon={<HistoryIcon />}
+						onClick={handleOpenTasksDialog}
+					>
+						<Typography variant="h6" component="span" align="center">
+							Data Training Status
+						</Typography>
+					</Button>
+					<Button
+						variant="outlined"
+						color="secondary"
+						style={{width: "80%"}}
+						startIcon={<QuestionAnswerIcon />}
+						onClick={handleOpenGroundTruthDialog}
+					>
+						<Typography variant="h6" component="span" align="center">
+							Ground Truths
+						</Typography>
+					</Button>
+					{is_god ? (
+						<Button
+							variant="outlined"
+							style={{width: "80%"}}
+							startIcon={<InboxIcon />}
+							onClick={handleOpenBucketsDialog}
+						>
+							<Typography variant="h6" component="span" align="center">
+								Buckets
+							</Typography>
+						</Button>
+					) : null}
+				</Box>
+				
+				<form
+					onSubmit={handleSubmit(searchVectors)}
+					className={classes.search_container}
+					
+				>
+					<TextField
+						label="Search"
+						variant="outlined"
+						error={errors?.q?.type}
+						helperText={errors?.q?.message}
+						sx={{ mt: 1 }}
+						size="small"
+						{...register("q", {
+							required: "Required",
+						})}
+						style={{width: "80%",
+							marginBottom: "0.5rem"
+						}}
+					/>
+					<TextField
+						select
+						label="Results"
+            defaultValue={3}
+            sx={{ m: 1, minWidth: 120 }}
+            size="small"
+						{...register("numResults")}
+						style={{width: "38%"}}
+					>
+						{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 50].map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
+							</MenuItem>
+						))}
+					</TextField>
+
+					<Button type="submit" variant="contained" sx={{ m: 1 }} style={{width: "38%"}}>
+						Search
+					</Button>
+					{hasSearched ? (
+						<Button
+							color="secondary"
+							variant="outlined"
+							sx={{ my: 1 }}
+							onClick={clearResults}
+						>
+							Clear Results
+						</Button>
+					) : null}
+				</form>
+			</div>:<div className={classes.titleContainer}>
 				<Box className={classes.action_box}>
 					<Button
 						variant="contained"
@@ -505,7 +609,7 @@ const MindMap = () => {
 						</Button>
 					) : null}
 				</form>
-			</div>
+			</div>}
 
 			<Box sx={{ padding: "10px", borderRadius: "8px", height: "100%" }}>
 				{isSmScreen ? (

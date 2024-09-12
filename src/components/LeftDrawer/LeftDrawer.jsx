@@ -6,10 +6,12 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Tooltip, styled } from "@mui/material";
+import { Menu, Tooltip, styled } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MenuIcon from "@mui/icons-material/Menu";
 import MuiDrawer from "@mui/material/Drawer";
+import { useResponsiveContext } from "context/ResponsiveContext";
+
 
 const DrawerHeader = styled("div")(({ theme }) => ({
 	display: "flex",
@@ -62,30 +64,27 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const LeftDrawer = ({ isOpened, toggleLeftNav, navOptions }) => {
+	const { isMobile } = useResponsiveContext();
+
 	return (
-		<Drawer
-			variant="permanent"
-			anchor="left"
+		<>
+		
+		{isMobile ? (<Menu
+			variant="popover"
+			// anchor="right"
 			open={isOpened}
 			onClose={toggleLeftNav}
+			anchorOrigin={{
+				vertical: 'bottom',
+				horizontal: 'right',
+			  }}
 		>
-			<Tooltip
-				title={isOpened ? "Close Left Drawer" : "Open Left Drawer"}
-				arrow
-			>
-				<DrawerHeader>
-					<IconButton onClick={toggleLeftNav}>
-						{isOpened ? <ChevronLeftIcon /> : <MenuIcon />}
-					</IconButton>
-				</DrawerHeader>
-			</Tooltip>
-			<Divider />
 			<List>
 				{navOptions.map(({ title, Icon, onClick, isActive }, index) => (
 					<Tooltip
 						title={isOpened ? "" : title}
 						arrow
-						placement="right"
+						placement="right"	
 						key={title}
 					>
 						<ListItem
@@ -126,7 +125,71 @@ const LeftDrawer = ({ isOpened, toggleLeftNav, navOptions }) => {
 					</Tooltip>
 				))}
 			</List>
-		</Drawer>
+		</Menu>) : (<Drawer
+			variant="permanent"
+			anchor="left"
+			open={isOpened}
+			onClose={toggleLeftNav}
+		>
+			<Tooltip
+				title={isOpened ? "Close Left Drawer" : "Open Left Drawer"}
+				arrow
+			>
+				<DrawerHeader>
+					<IconButton onClick={toggleLeftNav}>
+						{isOpened ? <ChevronLeftIcon /> : <MenuIcon />}
+					</IconButton>
+				</DrawerHeader>
+			</Tooltip>
+			<Divider />
+			<List>
+				{navOptions.map(({ title, Icon, onClick, isActive }, index) => (
+					<Tooltip
+						title={isOpened ? "" : title}
+						arrow
+						placement="right"	
+						key={title}
+					>
+						<ListItem
+							disablePadding
+							sx={{
+								display: "block",
+								backgroundColor: isActive ? "primary.light" : undefined,
+							}}
+							className={`nav-option-${index}`}
+						>
+							<ListItemButton
+								onClick={() => {
+									toggleLeftNav(false);
+									onClick();
+								}}
+								sx={{
+									minHeight: 48,
+									justifyContent: isOpened ? "initial" : "center",
+									px: 2.5,
+								}}
+							>
+								<ListItemIcon
+									sx={{
+										minWidth: 0,
+										mr: isOpened ? 3 : "auto",
+										justifyContent: "center",
+									}}
+								>
+									<Icon color={isActive ? "primary" : undefined} />
+								</ListItemIcon>
+								<ListItemText
+									primary={title}
+									// sx={{ display: isOpened ? "block" : "none" }}
+									sx={{ opacity: isOpened ? 1 : 0 }}
+								/>
+							</ListItemButton>
+						</ListItem>
+					</Tooltip>
+				))}
+			</List>
+		</Drawer>) }
+		</>
 	);
 };
 

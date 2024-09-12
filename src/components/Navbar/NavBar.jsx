@@ -182,13 +182,7 @@ const NavBar = (props) => {
 					disableGutters
 					sx={{ display: "flex", justifyContent: "space-between" }}
 				>
-					{access_token && isMobile ? (
-						<Box>
-							<IconButton onClick={props.toggleLeftNav}>
-								<MenuIcon />
-							</IconButton>
-						</Box>
-					) : null}
+					
 					<Box>
 						<Typography
 							variant="h3"
@@ -281,6 +275,14 @@ const NavBar = (props) => {
 										/> */}
 									</Button>
 								</Tooltip>
+
+								{access_token && isMobile ? (
+						<Box>
+							<IconButton onClick={props.toggleLeftNav}>
+								<MenuIcon />
+							</IconButton>
+						</Box>
+					) : null}
 								{!isMobile ? (
 									<>
 										<Menu
