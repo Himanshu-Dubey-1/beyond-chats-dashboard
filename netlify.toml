@@ -4,3 +4,4 @@
 
 [build.environment]
   ESLINT_NO_DEV_ERRORS = "true"
+  CI = "false"
